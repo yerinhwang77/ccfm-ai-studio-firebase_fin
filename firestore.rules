@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user has a company email
+    function isCompanyEmail() {
+      return request.auth.token.email.matches('.*@(mkm20201101\\.com|ccfm\\.co\\.kr|samchomaeul\\.com|samchomaeul\\.co\\.kr)$');
+    }
+
+    // List of admin emails (as defined in App.tsx)
+    function isAdmin() {
+      return request.auth.token.email in [
+        'ccfmedu@ccfm.co.kr',
+        'system@mkm20201101.com',
+        'hr@mkm20201101.com',
+        'ycs@mkm20201101.com',
+        'sjs@mkm20201101.com',
+        'hsy@mkm20201101.com',
+        'yjm@mkm20201101.com',
+        'lmk@mkm20201101.com',
+        'jjh@mkm20201101.com',
+        'st@mkm20201101.com',
+        'ljh@mkm20201101.com',
+        'hsh@samchomaeul.com'
+      ];
+    }
+
+    match /tools/{toolId} {
+      allow read: if isAuthenticated() && isCompanyEmail();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if isAuthenticated() && isCompanyEmail();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+
+    match /inquiries/{inquiryId} {
+      allow create: if isAuthenticated() && isCompanyEmail();
+      allow read, update, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // Default deny for everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -6,35 +6,22 @@ export enum Department {
   CONCRETE = '콘크리트 파머스',
 }
 
-export interface AccountInfo {
-  id: string;
-  accountId: string;
-  accountPw: string;
-  twoFactorNote: string;
-  creatorName: string;
-  // Financial/Admin details
-  paymentType?: string;
-  cost?: string;
-  cardName?: string;
-  cardNum?: string;
-  cardPw?: string;
-  paymentDate?: string;
-  connectedAccount?: string;
-}
 
 export interface Tool {
   id: string;
-  name: string;
+  department: Department;
+  category: string;
+  tool_name: string;
   description: string;
   logoUrl: string;
-  linkUrl: string;
-  manualUrl: string;
-  department: Department;
-  purpose: string;
-  category: string; // e.g., 'AI', 'General'
-  accounts: AccountInfo[];
-  isManaged?: boolean; // New field: If true, hides credentials for general users
-  order?: number; // For sorting
+  manual_link: string;
+  service_url: string;
+  login_id: string;
+  login_pw: string;
+  memo: string;
+  in_use: 'Y' | 'N';
+  is_paid: 'Y' | 'N';
+  order?: number;
 }
 
 export interface User {
@@ -50,6 +37,7 @@ export interface Inquiry {
   type: 'Deletion' | 'Correction';
   toolId: string;
   toolName: string;
+  toolDepartment?: Department;
   userEmail: string;
   userName: string;
   content: string;
